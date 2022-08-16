@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -19,32 +21,11 @@ class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
   final _flutterVmPlugin = FlutterVm();
 
+  final vmservice = FlutterVmService();
+
   @override
   void initState() {
     super.initState();
-    initPlatformState();
-  }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    // We also handle the message potentially returning null.
-    try {
-      platformVersion =
-          await _flutterVmPlugin.getPlatformVersion() ?? 'Unknown platform version';
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _platformVersion = platformVersion;
-    });
   }
 
   @override
@@ -54,8 +35,123 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+        body: SingleChildScrollView(
+          child: Container(
+            margin: const EdgeInsets.all(24),
+            child: Column(children: <Widget>[
+              InkWell(
+                onTap: () async {
+                  await vmservice.open();
+                },
+                child: Container(
+                    padding: const EdgeInsets.all(8),
+                    margin: const EdgeInsets.all(8),
+                    color: Colors.yellow,
+                    child: const Text(
+                      'connect dartvm',
+                      style: TextStyle(fontSize: 22, color: Colors.black),
+                    )),
+              ),
+              InkWell(
+                onTap: () async {
+                  final map = await vmservice.getVM();
+                  debugPrint("vm: ${jsonEncode(map)}");
+                },
+                child: Container(
+                    padding: const EdgeInsets.all(8),
+                    margin: const EdgeInsets.all(8),
+                    color: Colors.grey,
+                    child: const Text(
+                      'get vm',
+                      style: TextStyle(fontSize: 22, color: Colors.black),
+                    )),
+              ),
+              InkWell(
+                onTap: () async {
+                  final map = await vmservice.getProcessMemoryUsage();
+                  debugPrint("process memory: ${jsonEncode(map)}");
+                },
+                child: Container(
+                    padding: const EdgeInsets.all(8),
+                    margin: const EdgeInsets.all(8),
+                    color: Colors.grey,
+                    child: const Text(
+                      'get process memory',
+                      style: TextStyle(fontSize: 22, color: Colors.black),
+                    )),
+              ),
+              InkWell(
+                onTap: () async {
+                  final map = await vmservice.getClassList();
+                  debugPrint("classList: ${jsonEncode(map)}");
+                },
+                child: Container(
+                    padding: const EdgeInsets.all(8),
+                    margin: const EdgeInsets.all(8),
+                    color: Colors.yellow,
+                    child: const Text(
+                      'get classList',
+                      style: TextStyle(fontSize: 22, color: Colors.black),
+                    )),
+              ),
+              InkWell(
+                onTap: () async {
+                  final map = await vmservice.getIsolateGroup();
+                  debugPrint("isolate group: ${jsonEncode(map)}");
+                },
+                child: Container(
+                    padding: const EdgeInsets.all(8),
+                    margin: const EdgeInsets.all(8),
+                    color: Colors.yellow,
+                    child: const Text(
+                      'get isolate group',
+                      style: TextStyle(fontSize: 22, color: Colors.black),
+                    )),
+              ),
+              InkWell(
+                onTap: () async {
+                  final map = await vmservice.getIsolateGroupMemoryUsage();
+                  debugPrint("isolate group memory: ${jsonEncode(map)}");
+                },
+                child: Container(
+                    padding: const EdgeInsets.all(8),
+                    margin: const EdgeInsets.all(8),
+                    color: Colors.yellow,
+                    child: const Text(
+                      'get isolate group memory',
+                      style: TextStyle(fontSize: 22, color: Colors.black),
+                    )),
+              ),
+              InkWell(
+                onTap: () async {
+                  final map = await vmservice.getIsolate();
+                  debugPrint("isolate: ${jsonEncode(map)}");
+                },
+                child: Container(
+                    padding: const EdgeInsets.all(8),
+                    margin: const EdgeInsets.all(8),
+                    color: Colors.yellow,
+                    child: const Text(
+                      'get isolate',
+                      style: TextStyle(fontSize: 22, color: Colors.black),
+                    )),
+              ),
+              InkWell(
+                onTap: () async {
+                  final map = await vmservice.getIsolateMemoryUsage();
+                  debugPrint("isolate memory: ${jsonEncode(map)}");
+                },
+                child: Container(
+                    padding: const EdgeInsets.all(8),
+                    margin: const EdgeInsets.all(8),
+                    color: Colors.grey,
+                    child: const Text(
+                      'get isolate memory',
+                      style: TextStyle(fontSize: 22, color: Colors.black),
+                    )),
+              ),
+            ]),
+          ),
         ),
       ),
     );

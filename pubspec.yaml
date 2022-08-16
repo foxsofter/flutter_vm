@@ -1,7 +1,7 @@
 name: flutter_vm
 description: A new Flutter plugin project.
 version: 0.0.1
-homepage:
+homepage: https://github.com/foxsofter/flutter_vm
 
 environment:
   sdk: ">=2.17.6 <3.0.0"
@@ -11,6 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   plugin_platform_interface: ^2.0.2
+  vm_service: ^9.3.0
 
 dev_dependencies:
   flutter_test:
