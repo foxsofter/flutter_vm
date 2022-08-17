@@ -1,5 +1,8 @@
 import 'dart:convert';
+import 'dart:developer';
+import 'dart:isolate';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -28,6 +31,22 @@ class _MyAppState extends State<MyApp> {
     super.initState();
   }
 
+  int fib(int n) {
+    int number1 = n - 1;
+    int number2 = n - 2;
+    if (0 == n) {
+      return 0;
+    } else if (1 == n) {
+      return 1;
+    } else {
+      return (fib(number1) + fib(number2));
+    }
+  }
+
+  void createIsolate() {
+    compute(fib, 10000);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -41,12 +60,26 @@ class _MyAppState extends State<MyApp> {
             child: Column(children: <Widget>[
               InkWell(
                 onTap: () async {
+                  Isolate.spawn((msg) {}, '');
+                  await compute(fib, 100);
+                },
+                child: Container(
+                    padding: const EdgeInsets.all(8),
+                    margin: const EdgeInsets.all(8),
+                    color: Colors.red,
+                    child: const Text(
+                      'new isolate',
+                      style: TextStyle(fontSize: 22, color: Colors.black),
+                    )),
+              ),
+              InkWell(
+                onTap: () async {
                   await vmservice.open();
                 },
                 child: Container(
                     padding: const EdgeInsets.all(8),
                     margin: const EdgeInsets.all(8),
-                    color: Colors.yellow,
+                    color: Colors.red,
                     child: const Text(
                       'connect dartvm',
                       style: TextStyle(fontSize: 22, color: Colors.black),
@@ -55,7 +88,7 @@ class _MyAppState extends State<MyApp> {
               InkWell(
                 onTap: () async {
                   final map = await vmservice.getVM();
-                  debugPrint("vm: ${jsonEncode(map)}");
+                  log("vm: ${jsonEncode(map)}");
                 },
                 child: Container(
                     padding: const EdgeInsets.all(8),
@@ -69,7 +102,7 @@ class _MyAppState extends State<MyApp> {
               InkWell(
                 onTap: () async {
                   final map = await vmservice.getProcessMemoryUsage();
-                  debugPrint("process memory: ${jsonEncode(map)}");
+                  log("process memory: ${jsonEncode(map)}");
                 },
                 child: Container(
                     padding: const EdgeInsets.all(8),
@@ -82,8 +115,8 @@ class _MyAppState extends State<MyApp> {
               ),
               InkWell(
                 onTap: () async {
-                  final map = await vmservice.getClassList();
-                  debugPrint("classList: ${jsonEncode(map)}");
+                  final map = await vmservice.getCurrentIsolateClassList();
+                  log("classList: ${jsonEncode(map)}");
                 },
                 child: Container(
                     padding: const EdgeInsets.all(8),
@@ -97,7 +130,7 @@ class _MyAppState extends State<MyApp> {
               InkWell(
                 onTap: () async {
                   final map = await vmservice.getIsolateGroup();
-                  debugPrint("isolate group: ${jsonEncode(map)}");
+                  log("isolate group: ${jsonEncode(map)}");
                 },
                 child: Container(
                     padding: const EdgeInsets.all(8),
@@ -111,7 +144,7 @@ class _MyAppState extends State<MyApp> {
               InkWell(
                 onTap: () async {
                   final map = await vmservice.getIsolateGroupMemoryUsage();
-                  debugPrint("isolate group memory: ${jsonEncode(map)}");
+                  log("isolate group memory: ${jsonEncode(map)}");
                 },
                 child: Container(
                     padding: const EdgeInsets.all(8),
@@ -125,7 +158,7 @@ class _MyAppState extends State<MyApp> {
               InkWell(
                 onTap: () async {
                   final map = await vmservice.getIsolate();
-                  debugPrint("isolate: ${jsonEncode(map)}");
+                  log("isolate: ${jsonEncode(map)}");
                 },
                 child: Container(
                     padding: const EdgeInsets.all(8),
@@ -139,7 +172,7 @@ class _MyAppState extends State<MyApp> {
               InkWell(
                 onTap: () async {
                   final map = await vmservice.getIsolateMemoryUsage();
-                  debugPrint("isolate memory: ${jsonEncode(map)}");
+                  log("isolate memory: ${jsonEncode(map)}");
                 },
                 child: Container(
                     padding: const EdgeInsets.all(8),
